@@ -1,0 +1,190 @@
+# Step 1 — Clone the Project From GitHub
+
+Open terminal and run:
+
+```bash id="j34m8k"
+git clone https://github.com/Leela-Deepak-Evoke/WebMind-AI.git
+```
+
+---
+
+# Step 2 — Move Into Project Folder
+
+```bash id="3pvksd"
+cd WebMind-AI
+```
+
+---
+
+# Step 3 — Create Virtual Environment
+
+## macOS/Linux
+
+```bash id="6zh8y4"
+python3 -m venv ai
+```
+
+## Windows
+
+```bash id="x9m0j7"
+python -m venv ai
+```
+
+---
+
+# Step 4 — Activate Virtual Environment
+
+## macOS/Linux
+
+```bash id="50h77q"
+source ai/bin/activate
+```
+
+## Windows
+
+```bash id="z4l2ib"
+ai\Scripts\activate
+```
+
+---
+
+# Step 5 — Install Dependencies
+
+```bash id="11rsc5"
+pip install -r requirements.txt
+```
+
+---
+
+# Step 6 — Create `.env` File
+
+Inside project root create:
+
+```text id="4b7twi"
+.env
+```
+
+Add:
+
+```env id="n6i2zu"
+OPENROUTER_API_KEY=your_openrouter_api_key
+```
+
+---
+
+# Step 7 — Run Streamlit Project
+
+```bash id="4jg4ht"
+streamlit run main.py
+```
+
+---
+
+# Step 8 — Open In Browser
+
+Usually opens automatically.
+
+If not:
+
+```text id="jlwm0r"
+http://localhost:8501
+```
+
+---
+
+# Final Local Project Flow
+
+```text id="mq1r52"
+Clone Repo
+    ↓
+Create Virtual Environment
+    ↓
+Activate Environment
+    ↓
+Install Requirements
+    ↓
+Add .env API Key
+    ↓
+Run Streamlit
+    ↓
+Access App In Browser
+```
+
+---
+
+# Recommended Commands (Complete Setup)
+
+## macOS/Linux
+
+```bash id="m7t2lg"
+git clone https://github.com/Leela-Deepak-Evoke/WebMind-AI.git
+
+cd WebMind-AI
+
+python3 -m venv ai
+
+source ai/bin/activate
+
+pip install -r requirements.txt
+
+streamlit run main.py
+```
+
+---
+
+# If Streamlit Not Found
+
+Run:
+
+```bash id="8xj42o"
+pip install streamlit
+```
+
+---
+
+# If Selenium Chrome Error Comes
+
+Install Chrome:
+
+[Google Chrome Download](https://www.google.com/chrome/?utm_source=chatgpt.com)
+
+Then verify:
+
+```bash id="jof5ke"
+google-chrome --version
+```
+
+OR on Mac:
+
+```bash id="xvcd8y"
+/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version
+```
+
+---
+
+# Recommended Requirements.txt
+
+Use this clean version:
+
+```txt id="ehw1lo"
+streamlit
+selenium
+beautifulsoup4
+webdriver-manager
+openai
+python-dotenv
+lxml
+```
+
+---
+
+# Recommended Production Command
+
+For deployment testing locally:
+
+```bash id="ut8dly"
+streamlit run main.py --server.port 8501
+```
+
+---
+
