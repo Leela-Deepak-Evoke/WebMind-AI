@@ -1,0 +1,148 @@
+# 🏗️ WebMind AI — Project Architecture
+
+```text
+┌─────────────────────────────────────────────┐
+│                USER INTERFACE               │
+│                                             │
+│        Streamlit Frontend Dashboard         │
+│                                             │
+│  • URL Input                                │
+│  • AI Q&A Accordions                        │
+│  • Keyword Intelligence Grid                │
+│  • Metrics Dashboard                        │
+│  • Website Insights                         │
+└─────────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────┐
+│              APPLICATION LAYER              │
+│                                             │
+│                  main.py                    │
+│                                             │
+│  • Handles UI interactions                  │
+│  • Controls workflow execution              │
+│  • Manages Streamlit session state          │
+│  • Displays AI-generated results            │
+└─────────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────┐
+│               SCRAPING LAYER                │
+│                                             │
+│                 scrape.py                   │
+│                                             │
+│  • Selenium WebDriver                       │
+│  • Dynamic website loading                  │
+│  • JavaScript-rendered page scraping        │
+│  • Lazy-loading handling                    │
+│  • HTML extraction                          │
+│  • DOM cleaning using BeautifulSoup         │
+└─────────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────┐
+│            CONTENT PROCESSING               │
+│                                             │
+│          BeautifulSoup + Cleaning           │
+│                                             │
+│  • Remove scripts/styles                    │
+│  • Remove unnecessary HTML tags             │
+│  • Extract readable website content         │
+│  • Normalize and clean text                 │
+└─────────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────┐
+│                AI ENGINE LAYER              │
+│                                             │
+│                  parse.py                   │
+│                                             │
+│  • Prompt Engineering                       │
+│  • AI Request Construction                  │
+│  • Question Generation                      │
+│  • Answer Generation                        │
+│  • Keyword Extraction                       │
+│  • JSON Response Formatting                 │
+└─────────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────┐
+│             AI MODEL PROVIDER               │
+│                                             │
+│                OpenRouter API               │
+│                                             │
+│  • Mistral AI                               │
+│  • GPT OSS                                  │
+│  • Gemma                                    │
+│  • Open Source LLM Access                   │
+└─────────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────┐
+│             RESPONSE PROCESSING             │
+│                                             │
+│  • JSON Validation                          │
+│  • Error Handling                           │
+│  • Data Structuring                         │
+│  • Safety Fallback Handling                 │
+└─────────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────┐
+│             VISUALIZATION LAYER             │
+│                                             │
+│          Streamlit Dynamic Rendering        │
+│                                             │
+│  • Accordion Q&A Display                    │
+│  • Keyword Grid Layout                      │
+│  • Dashboard Metrics                        │
+│  • AI Insights Visualization                │
+│  • Responsive UI Rendering                  │
+└─────────────────────────────────────────────┘
+```
+
+# 🔄 End-to-End Workflow
+
+```text
+User Enters URL
+        ↓
+Website Scraping Starts
+        ↓
+Selenium Loads Website
+        ↓
+HTML Content Extracted
+        ↓
+BeautifulSoup Cleans DOM
+        ↓
+Clean Text Sent to AI
+        ↓
+AI Generates:
+    • Questions
+    • Answers
+    • Keywords
+    • Insights
+        ↓
+JSON Response Returned
+        ↓
+Streamlit Renders Dashboard
+```
+
+# 🧠 Core Technologies Used
+
+| Layer              | Technology     |
+| ------------------ | -------------- |
+| Frontend UI        | Streamlit      |
+| Web Scraping       | Selenium       |
+| HTML Parsing       | Beautiful Soup |
+| AI Integration     | OpenRouter     |
+| LLM Models         | openai         |
+| Backend Logic      | Python         |
+| Environment Config | python-dotenv  |
+
+
+# 📌 Project Category
+
+```text
+AI + Web Scraping + NLP + Intelligent Automation
+```
+

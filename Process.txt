@@ -1,0 +1,60 @@
+Here in this project I am going to create AI Web Scraper
+
+User Enters URL
+        ↓
+Website Scraping Starts
+        ↓
+Selenium Loads Website
+        ↓
+HTML Content Extracted
+        ↓
+BeautifulSoup Cleans DOM
+        ↓
+Clean Text Sent to AI
+        ↓
+AI Generates:
+    • Questions
+    • Answers
+    • Keywords
+    • Insights
+        ↓
+JSON Response Returned
+        ↓
+Streamlit Renders Dashboard
+
+
+
+1. create a folder named AI-WebScrapper
+2. install few depedencies given below:
+    streamlit = Frontend
+    selenium = Web Scrapping
+    langchain = Calling the AI and having the AI parse through our data
+3. Setup a virtal environment and install the above dependencies
+4. Run the commands given below:
+ python3 -m venv ai
+ source ai/bin/activate (To activate the environment)
+5. copy paste the requriements from the below:
+    streamlit
+    langchain
+    langchain_ollama
+    selenium
+    beautifulsoup4
+    lxml
+    html5lib
+    python-dotenv
+6. Run the command : pip install -r requirements.txt
+7. create main.py
+8. Create a streamlit user interface 
+9. Run the command to start the UI: 
+    streamlit run main.py
+10. create the file named scrape.py for scarpping the website method
+11. go to the given link below: 
+    https://googlechromelabs.github.io/chrome-for-testing/#stable
+    and then click on stable
+12. download that based on the OS I am using the download the zip folder
+13. Extract the zip folder and copy the exact web driver application from the folder and paste in the exact directory where I am running the project and rename the file as "chromedriver"
+14. We want to take just the textual content pass that to the LLM and allow it to parse it, for this we create the helper functions in our scrape.py
+15. Type the code for OllamaLLM and then install Ollama to connect with the LLM
+16. Pick the Ollama model form the githb page given: 
+    https://github.com/ollama/ollama
+    https://ollama.com/library
