@@ -1,30 +1,41 @@
 from bs4 import BeautifulSoup
-import selenium.webdriver as webdriver
+from selenium import webdriver
 
-from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from webdriver_manager.chrome import ChromeDriverManager
+from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import WebDriverException
 
 import time
 
 
-def scrape_website(website):
+def create_driver():
 
-    print("Launching Chrome browser...")
+    chrome_options = Options()
 
-    options = webdriver.ChromeOptions()
+    # REQUIRED FOR STREAMLIT CLOUD
+    chrome_options.add_argument("--headless=new")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--disable-gpu")
 
-    options.add_argument("--headless=new")
-    options.add_argument("--disable-gpu")
-    options.add_argument("--window-size=1920,1080")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--disable-blink-features=AutomationControlled")
+    # Performance & Stability
+    chrome_options.add_argument("--window-size=1920,1080")
+    chrome_options.add_argument("--disable-extensions")
+    chrome_options.add_argument("--disable-infobars")
+    chrome_options.add_argument("--disable-popup-blocking")
 
-    options.add_argument(
+    # Prevent automation detection
+    chrome_options.add_argument(
+        "--disable-blink-features=AutomationControlled"
+    )
+
+    # User Agent
+    chrome_options.add_argument(
         "user-agent=Mozilla/5.0 "
         "(Macintosh; Intel Mac OS X 10_15_7) "
         "AppleWebKit/537.36 "
@@ -32,20 +43,38 @@ def scrape_website(website):
         "Chrome/124.0.0.0 Safari/537.36"
     )
 
+    # IMPORTANT:
+    # DO NOT USE webdriver-manager IN STREAMLIT CLOUD
+
     driver = webdriver.Chrome(
-        service=Service(ChromeDriverManager().install()),
-        options=options
+        options=chrome_options
     )
+
+    return driver
+
+
+def scrape_website(website):
+
+    driver = None
 
     try:
 
+        print("Launching Chrome browser...")
+
+        driver = create_driver()
+
+        driver.set_page_load_timeout(30)
+
         driver.get(website)
 
+        # Wait until page body loads
         WebDriverWait(driver, 20).until(
-            EC.presence_of_element_located((By.TAG_NAME, "body"))
+            EC.presence_of_element_located(
+                (By.TAG_NAME, "body")
+            )
         )
 
-        # Scroll page
+        # Scroll page slowly
         for _ in range(3):
 
             driver.execute_script(
@@ -57,21 +86,37 @@ def scrape_website(website):
         html = driver.page_source
 
         # Basic validation
-        if len(html) < 1000:
+        if not html or len(html) < 1000:
+
+            print("Page content too small.")
 
             return ""
 
         return html
 
+    except TimeoutException:
+
+        print("Page load timeout.")
+
+        return ""
+
+    except WebDriverException as e:
+
+        print(f"WebDriver Error: {e}")
+
+        return ""
+
     except Exception as e:
 
-        print(f"Scraping Error: {e}")
+        print(f"Unexpected Error: {e}")
 
         return ""
 
     finally:
 
-        driver.quit()
+        if driver:
+
+            driver.quit()
 
 
 def extract_body_content(html_content):
@@ -105,7 +150,7 @@ def clean_body_content(body_content):
         "html.parser"
     )
 
-    # Remove unwanted elements
+    # Remove unwanted tags
     for tag in soup([
         "script",
         "style",
@@ -116,8 +161,11 @@ def clean_body_content(body_content):
         "footer",
         "header",
         "nav",
-        "aside"
+        "aside",
+        "form",
+        "button"
     ]):
+
         tag.extract()
 
     cleaned_content = soup.get_text(
@@ -131,11 +179,13 @@ def clean_body_content(body_content):
         if line.strip()
     )
 
-    # Remove duplicates
+    # Remove duplicate lines
     unique_lines = list(
         dict.fromkeys(
             cleaned_content.splitlines()
         )
     )
 
-    return "\n".join(unique_lines)
+    final_content = "\n".join(unique_lines)
+
+    return final_content
