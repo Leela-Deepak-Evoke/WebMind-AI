@@ -110,7 +110,7 @@ if st.button("🚀 Process Website"):
             if not raw_html:
 
                 st.error(
-                    "Unable to process with given URL"
+                    "Unable to process with given URL as its Blocked to do so.."
                 )
 
             else:
@@ -130,7 +130,7 @@ if st.button("🚀 Process Website"):
                 if not cleaned_content.strip():
 
                     st.error(
-                        "Unable to process with given URL"
+                        "Unable to process with given URL due to unidentified Content"
                     )
 
                 else:
