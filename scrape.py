@@ -1,40 +1,49 @@
+import requests
+import time
+
 from bs4 import BeautifulSoup
+
 from selenium import webdriver
-
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
 
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import WebDriverException
 
-import time
 
+# ---------------- REQUEST HEADERS ----------------
+
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 "
+        "(Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 "
+        "(KHTML, like Gecko) "
+        "Chrome/124.0.0.0 Safari/537.36"
+    )
+}
+
+
+# ---------------- CREATE SELENIUM DRIVER ----------------
 
 def create_driver():
 
     chrome_options = Options()
 
-    # REQUIRED FOR STREAMLIT CLOUD
     chrome_options.add_argument("--headless=new")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-gpu")
 
-    # Performance & Stability
     chrome_options.add_argument("--window-size=1920,1080")
-    chrome_options.add_argument("--disable-extensions")
-    chrome_options.add_argument("--disable-infobars")
-    chrome_options.add_argument("--disable-popup-blocking")
 
-    # Prevent automation detection
     chrome_options.add_argument(
         "--disable-blink-features=AutomationControlled"
     )
 
-    # User Agent
     chrome_options.add_argument(
         "user-agent=Mozilla/5.0 "
         "(Macintosh; Intel Mac OS X 10_15_7) "
@@ -43,9 +52,6 @@ def create_driver():
         "Chrome/124.0.0.0 Safari/537.36"
     )
 
-    # IMPORTANT:
-    # DO NOT USE webdriver-manager IN STREAMLIT CLOUD
-
     driver = webdriver.Chrome(
         options=chrome_options
     )
@@ -53,13 +59,47 @@ def create_driver():
     return driver
 
 
+# ---------------- MAIN SCRAPER ----------------
+
 def scrape_website(website):
+
+    # ---------------- FIX URL ----------------
+
+    if not website.startswith("http"):
+
+        website = "https://" + website
+
+    # ---------------- TRY NORMAL REQUEST FIRST ----------------
+
+    try:
+
+        response = requests.get(
+            website,
+            headers=HEADERS,
+            timeout=20
+        )
+
+        if response.status_code == 200:
+
+            html = response.text
+
+            if len(html) > 1000:
+
+                print("Scraped using requests")
+
+                return html
+
+    except Exception as e:
+
+        print(f"Requests scraping failed: {e}")
+
+    # ---------------- FALLBACK TO SELENIUM ----------------
 
     driver = None
 
     try:
 
-        print("Launching Chrome browser...")
+        print("Launching Selenium browser...")
 
         driver = create_driver()
 
@@ -67,14 +107,13 @@ def scrape_website(website):
 
         driver.get(website)
 
-        # Wait until page body loads
         WebDriverWait(driver, 20).until(
             EC.presence_of_element_located(
                 (By.TAG_NAME, "body")
             )
         )
 
-        # Scroll page slowly
+        # Scroll slowly
         for _ in range(3):
 
             driver.execute_script(
@@ -85,30 +124,29 @@ def scrape_website(website):
 
         html = driver.page_source
 
-        # Basic validation
-        if not html or len(html) < 1000:
+        if html and len(html) > 1000:
 
-            print("Page content too small.")
+            print("Scraped using Selenium")
 
-            return ""
+            return html
 
-        return html
+        return ""
 
     except TimeoutException:
 
-        print("Page load timeout.")
+        print("Timeout while loading website")
 
         return ""
 
     except WebDriverException as e:
 
-        print(f"WebDriver Error: {e}")
+        print(f"Selenium WebDriver Error: {e}")
 
         return ""
 
     except Exception as e:
 
-        print(f"Unexpected Error: {e}")
+        print(f"Unexpected Selenium Error: {e}")
 
         return ""
 
@@ -118,6 +156,8 @@ def scrape_website(website):
 
             driver.quit()
 
+
+# ---------------- EXTRACT BODY ----------------
 
 def extract_body_content(html_content):
 
@@ -139,6 +179,8 @@ def extract_body_content(html_content):
     return ""
 
 
+# ---------------- CLEAN CONTENT ----------------
+
 def clean_body_content(body_content):
 
     if not body_content:
@@ -150,7 +192,6 @@ def clean_body_content(body_content):
         "html.parser"
     )
 
-    # Remove unwanted tags
     for tag in soup([
         "script",
         "style",
@@ -172,14 +213,12 @@ def clean_body_content(body_content):
         separator="\n"
     )
 
-    # Remove blank lines
     cleaned_content = "\n".join(
         line.strip()
         for line in cleaned_content.splitlines()
         if line.strip()
     )
 
-    # Remove duplicate lines
     unique_lines = list(
         dict.fromkeys(
             cleaned_content.splitlines()
